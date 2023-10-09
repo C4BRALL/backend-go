@@ -23,7 +23,7 @@ func main() {
 
 	err = godotenv.Load(caminhoEnv)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Erro ao carregar o arquivo .en: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Erro ao carregar o arquivo .env: %v\n", err)
 		os.Exit(1)
 	}
 
