@@ -4,3 +4,6 @@ migrateDB:
 
 dev:
 	go run ${pwd}/src/main/main.go
+
+dockerDevUp: 
+	docker compose up ./docker-compose/development/docker-compose.yaml
