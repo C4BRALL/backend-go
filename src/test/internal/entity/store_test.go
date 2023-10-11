@@ -9,14 +9,14 @@ import (
 )
 
 func TestNewStore(t *testing.T) {
-	idSeller := uuid.NewID()
+	idSeller := uuid.NewID().String()
 	store, err := entity.NewStore(idSeller, "testeName", "descrptionStore")
 	assert.Nil(t, err)
 	assert.NotNil(t, store)
 	assert.NotEmpty(t, store.ID)
 	assert.NotEmpty(t, store.ID_seller)
 	assert.NotEmpty(t, store.Name)
-	assert.Equal(t, idSeller.String(), store.ID_seller.ID.String())
+	assert.Equal(t, idSeller, store.ID_seller)
 	assert.Equal(t, "testeName", store.Name)
 	assert.Equal(t, "descrptionStore", store.Description)
 }
