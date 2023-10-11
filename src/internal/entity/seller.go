@@ -3,36 +3,24 @@ package entity
 import (
 	"time"
 
+	enums "github.com/backend/src/internal/enums"
+
 	"github.com/backend/src/pkg/entity"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Status int
-
-const (
-	Active   Status = 1
-	Inactive Status = 0
-)
-
-type SellerType string
-
-const (
-	Customer    SellerType = "customers"
-	Salesperson SellerType = "seller"
-)
-
 type Seller struct {
-	ID        entity.ID  `json:"id"`
-	Name      string     `json:"name"`
-	Email     string     `json:"email"`
-	Document  string     `json:"document"`
-	Password  string     `json:"-"`
-	Phone     string     `json:"phone"`
-	Type      SellerType `json:"type"`
-	Status    Status     `json:"status"`
-	CreatedAt *time.Time `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
-	DeletedAt *time.Time `json:"-"`
+	ID        entity.ID      `json:"id"`
+	Name      string         `json:"name"`
+	Email     string         `json:"email"`
+	Document  string         `json:"document"`
+	Password  string         `json:"-"`
+	Phone     string         `json:"phone"`
+	Type      enums.UserType `json:"type"`
+	Status    enums.Status   `json:"status"`
+	CreatedAt *time.Time     `json:"createdAt"`
+	UpdatedAt *time.Time     `json:"updatedAt"`
+	DeletedAt *time.Time     `json:"-"`
 }
 
 func NewSeller(name, email, document, password string, phone string) (*Seller, error) {
@@ -48,8 +36,8 @@ func NewSeller(name, email, document, password string, phone string) (*Seller, e
 		Document: document,
 		Password: string(hash),
 		Phone:    phone,
-		Type:     SellerType(Customer),
-		Status:   Status(Active),
+		Type:     enums.UserType(enums.Salesperson),
+		Status:   enums.Status(enums.Active),
 	}, nil
 }
 
