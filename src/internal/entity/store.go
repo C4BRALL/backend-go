@@ -9,9 +9,8 @@ import (
 )
 
 type Store struct {
-	ID          entity.ID `json:"id"`
-	ID_seller   string    `json:"id_seller"`
-	Seller      Seller
+	ID          entity.ID    `json:"id"`
+	ID_seller   string       `json:"id_seller"`
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	Status      enums.Status `json:"status"`

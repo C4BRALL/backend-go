@@ -18,6 +18,7 @@ type Seller struct {
 	Phone     string         `json:"phone"`
 	Type      enums.UserType `json:"type"`
 	Status    enums.Status   `json:"status"`
+	Store     Store          `json:"store"`
 	CreatedAt *time.Time     `json:"createdAt"`
 	UpdatedAt *time.Time     `json:"updatedAt"`
 	DeletedAt *time.Time     `json:"-"`
