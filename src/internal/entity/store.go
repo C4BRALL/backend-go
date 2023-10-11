@@ -10,7 +10,7 @@ import (
 
 type Store struct {
 	ID          entity.ID    `json:"id"`
-	ID_seller   string       `json:"id_seller"`
+	ID_seller   Seller       `json:"id_seller"`
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	Status      enums.Status `json:"status"`
@@ -19,10 +19,10 @@ type Store struct {
 	DeletedAt   *time.Time   `json:"-"`
 }
 
-func NewStore(id_seller string, name string, description string) (*Store, error) {
+func NewStore(id_seller entity.ID, name string, description string) (*Store, error) {
 	return &Store{
 		ID:          entity.NewID(),
-		ID_seller:   id_seller,
+		ID_seller:   Seller{ID: id_seller},
 		Name:        name,
 		Description: description,
 		Status:      enums.Status(enums.Active),
