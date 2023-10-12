@@ -1,12 +1,23 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	enums "github.com/backend/src/internal/enums"
 
 	"github.com/backend/src/pkg/entity"
 	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	ErrIDIsRequired       = errors.New("id required")
+	ErrInvalidId          = errors.New("invalid id")
+	ErrNameIsRequired     = errors.New("name required")
+	ErrEmailIsRequired    = errors.New("email required")
+	ErrDocumentIsRequired = errors.New("document required")
+	ErrPasswordIsRequired = errors.New("password required")
+	ErrPhoneIsRequired    = errors.New("phone required")
 )
 
 type Seller struct {
@@ -18,7 +29,7 @@ type Seller struct {
 	Phone     string         `json:"phone"`
 	Type      enums.UserType `json:"type"`
 	Status    enums.Status   `json:"status"`
-	Store     []Store        `json:"store"`
+	Stores    []Store        `json:"store"`
 	CreatedAt *time.Time     `json:"createdAt"`
 	UpdatedAt *time.Time     `json:"updatedAt"`
 	DeletedAt *time.Time     `json:"-"`
@@ -30,7 +41,7 @@ func NewSeller(name, email, document, password string, phone string) (*Seller, e
 		return nil, err
 	}
 
-	return &Seller{
+	seller := &Seller{
 		ID:       entity.NewID(),
 		Name:     name,
 		Email:    email,
@@ -39,10 +50,41 @@ func NewSeller(name, email, document, password string, phone string) (*Seller, e
 		Phone:    phone,
 		Type:     enums.UserType(enums.Salesperson),
 		Status:   enums.Status(enums.Active),
-	}, nil
+	}
+
+	validSeller := seller.Validate()
+	if validSeller != nil {
+		return nil, validSeller
+	}
+	return seller, nil
 }
 
 func (s *Seller) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(s.Password), []byte(password))
 	return err == nil
+}
+
+func (s *Seller) Validate() error {
+	if s.ID.String() == "" {
+		return ErrIDIsRequired
+	}
+	if _, err := entity.ParseID(s.ID.String()); err != nil {
+		return ErrInvalidId
+	}
+	if s.Name == "" {
+		return ErrNameIsRequired
+	}
+	if s.Email == "" {
+		return ErrEmailIsRequired
+	}
+	if s.Document == "" {
+		return ErrDocumentIsRequired
+	}
+	if s.Password == "" {
+		return ErrPasswordIsRequired
+	}
+	if s.Phone == "" {
+		return ErrPhoneIsRequired
+	}
+	return nil
 }

@@ -1,11 +1,16 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	enums "github.com/backend/src/internal/enums"
 
 	"github.com/backend/src/pkg/entity"
+)
+
+var (
+	ErrDescriptionIsRequired = errors.New("description required")
 )
 
 type Store struct {
@@ -20,11 +25,39 @@ type Store struct {
 }
 
 func NewStore(id_seller string, name string, description string) (*Store, error) {
-	return &Store{
+	store := &Store{
 		ID:          entity.NewID(),
 		ID_seller:   id_seller,
 		Name:        name,
 		Description: description,
 		Status:      enums.Status(enums.Active),
-	}, nil
+	}
+
+	storeValid := store.Validate()
+	if storeValid != nil {
+		return nil, storeValid
+	}
+	return store, nil
+}
+
+func (s *Store) Validate() error {
+	if s.ID.String() == "" {
+		return ErrIDIsRequired
+	}
+	if _, err := entity.ParseID(s.ID.String()); err != nil {
+		return ErrInvalidId
+	}
+	if s.ID_seller == "" {
+		return ErrIDIsRequired
+	}
+	if _, err := entity.ParseID(s.ID_seller); err != nil {
+		return ErrInvalidId
+	}
+	if s.Name == "" {
+		return ErrNameIsRequired
+	}
+	if s.Description == "" {
+		return ErrDescriptionIsRequired
+	}
+	return nil
 }
