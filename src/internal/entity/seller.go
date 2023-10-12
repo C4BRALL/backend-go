@@ -36,7 +36,11 @@ type Seller struct {
 }
 
 func NewSeller(name, email, document, password string, phone string) (*Seller, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if password == "" {
+		return nil, ErrPasswordIsRequired
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 15)
 	if err != nil {
 		return nil, err
 	}
@@ -80,9 +84,7 @@ func (s *Seller) Validate() error {
 	if s.Document == "" {
 		return ErrDocumentIsRequired
 	}
-	if s.Password == "" {
-		return ErrPasswordIsRequired
-	}
+
 	if s.Phone == "" {
 		return ErrPhoneIsRequired
 	}
