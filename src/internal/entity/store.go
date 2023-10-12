@@ -11,6 +11,7 @@ import (
 
 var (
 	ErrDescriptionIsRequired = errors.New("description required")
+	ErrIDSellerIsRequired    = errors.New("id_seller required")
 )
 
 type Store struct {
@@ -48,7 +49,7 @@ func (s *Store) Validate() error {
 		return ErrInvalidId
 	}
 	if s.ID_seller == "" {
-		return ErrIDIsRequired
+		return ErrIDSellerIsRequired
 	}
 	if _, err := entity.ParseID(s.ID_seller); err != nil {
 		return ErrInvalidId

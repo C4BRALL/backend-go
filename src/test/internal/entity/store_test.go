@@ -20,3 +20,25 @@ func TestNewStore(t *testing.T) {
 	assert.Equal(t, "testeName", store.Name)
 	assert.Equal(t, "descrptionStore", store.Description)
 }
+
+func TestStoreWhenNameIsRequired(t *testing.T) {
+	idSeller := uuid.NewID().String()
+	s, err := entity.NewStore(idSeller, "", "descrptionStore")
+	assert.Nil(t, s)
+	assert.Equal(t, entity.ErrNameIsRequired, err)
+}
+
+func TestStoreWhenDescriptionIsRequired(t *testing.T) {
+	idSeller := uuid.NewID().String()
+	s, err := entity.NewStore(idSeller, "testeName", "")
+	assert.Nil(t, s)
+	assert.Equal(t, entity.ErrDescriptionIsRequired, err)
+}
+
+func TestStoreValidate(t *testing.T) {
+	idSeller := uuid.NewID().String()
+	s, err := entity.NewStore(idSeller, "testeName", "descrptionStore")
+	assert.Nil(t, err)
+	assert.NotNil(t, s)
+	assert.Nil(t, s.Validate())
+}
