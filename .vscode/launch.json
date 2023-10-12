@@ -8,8 +8,8 @@
       "name": "Launch Package",
       "type": "go",
       "request": "launch",
-      "mode": "test",
-      "program": "./src/test/internal/entity/seller_test.go"
+      "mode": "auto",
+      "program": "./src/cmd/server/main.go"
     }
   ]
 }
