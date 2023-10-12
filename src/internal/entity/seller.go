@@ -21,7 +21,7 @@ var (
 )
 
 type Seller struct {
-	ID        entity.ID      `json:"id"`
+	ID        entity.ID      `json:"id" gorm:"primaryKey"`
 	Name      string         `json:"name"`
 	Email     string         `json:"email"`
 	Document  string         `json:"document"`
@@ -29,7 +29,7 @@ type Seller struct {
 	Phone     string         `json:"phone"`
 	Type      enums.UserType `json:"type"`
 	Status    enums.Status   `json:"status"`
-	Stores    []Store        `json:"store"`
+	Stores    []Store        `json:"stores"` // Não é necessário gorm:"foreignKey:SellerID"
 	CreatedAt *time.Time     `json:"createdAt"`
 	UpdatedAt *time.Time     `json:"updatedAt"`
 	DeletedAt *time.Time     `json:"-"`

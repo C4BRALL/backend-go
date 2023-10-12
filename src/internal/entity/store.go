@@ -15,8 +15,8 @@ var (
 )
 
 type Store struct {
-	ID          entity.ID    `json:"id"`
-	ID_seller   string       `json:"id_seller"`
+	ID          entity.ID    `json:"id" gorm:"primaryKey"`
+	SellerID    entity.ID    `json:"sellerID" gorm:"index"` // Adicione uma chave estrangeira aqui
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	Status      enums.Status `json:"status"`
@@ -25,10 +25,10 @@ type Store struct {
 	DeletedAt   *time.Time   `json:"-"`
 }
 
-func NewStore(id_seller string, name string, description string) (*Store, error) {
+func NewStore(id_seller entity.ID, name string, description string) (*Store, error) {
 	store := &Store{
 		ID:          entity.NewID(),
-		ID_seller:   id_seller,
+		SellerID:    id_seller,
 		Name:        name,
 		Description: description,
 		Status:      enums.Status(enums.Active),
@@ -48,10 +48,7 @@ func (s *Store) Validate() error {
 	if _, err := entity.ParseID(s.ID.String()); err != nil {
 		return ErrInvalidId
 	}
-	if s.ID_seller == "" {
-		return ErrIDSellerIsRequired
-	}
-	if _, err := entity.ParseID(s.ID_seller); err != nil {
+	if _, err := entity.ParseID(string(s.SellerID.String())); err != nil {
 		return ErrInvalidId
 	}
 	if s.Name == "" {
