@@ -36,5 +36,6 @@ func main() {
 	r.Post("/seller", sellerHandler.CreateSeller)
 	r.Get("/seller/{email}", sellerHandler.GetSeller)
 	r.Put("/seller/{email}", sellerHandler.UpdateSeller)
+	r.Delete("/seller/{document}", sellerHandler.DeleteSeller)
 	http.ListenAndServe(config.WebServerPort, r)
 }

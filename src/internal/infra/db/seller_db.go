@@ -17,6 +17,22 @@ func (s *SellerDB) Create(seller *entity.Seller) error {
 	return s.DB.Create(seller).Error
 }
 
+func (s *SellerDB) FindByDocument(document string) (*entity.Seller, error) {
+	var seller entity.Seller
+	if err := s.DB.Where("document = ?", document).First(&seller).Error; err != nil {
+		return nil, err
+	}
+	return &seller, nil
+}
+
+func (s *SellerDB) FindById(id string) (*entity.Seller, error) {
+	var seller entity.Seller
+	if err := s.DB.Where("id = ?", id).First(&seller).Error; err != nil {
+		return nil, err
+	}
+	return &seller, nil
+}
+
 func (s *SellerDB) FindByEmail(email string) (*entity.Seller, error) {
 	var seller entity.Seller
 	if err := s.DB.Where("email = ?", email).First(&seller).Error; err != nil {
@@ -29,8 +45,8 @@ func (s *SellerDB) Update(seller *entity.Seller) error {
 	return s.DB.Where("email = ?", seller.Email).Updates(seller).Error
 }
 
-func (s *SellerDB) Delete(email string) error {
-	seller, err := s.FindByEmail(email)
+func (s *SellerDB) Delete(id string) error {
+	seller, err := s.FindById(id)
 	if err != nil {
 		return err
 	}

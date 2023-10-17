@@ -91,3 +91,26 @@ func (h *SellerHandler) UpdateSeller(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode("seller updated")
 }
+
+func (h *SellerHandler) DeleteSeller(w http.ResponseWriter, r *http.Request) {
+	document := chi.URLParam(r, "document")
+	if document == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode("document not provided")
+	}
+
+	seller, err := h.SellerDB.FindByDocument(document)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode("seller not found")
+	}
+
+	err = h.SellerDB.Delete(seller.ID.String())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err.Error())
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("seller deleted")
+}
