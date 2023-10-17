@@ -22,6 +22,21 @@ func (s *SellerDB) FindByEmail(email string) (*entity.Seller, error) {
 	if err := s.DB.Where("email = ?", email).First(&seller).Error; err != nil {
 		return nil, err
 	}
-
 	return &seller, nil
+}
+
+func (s *SellerDB) Update(seller *entity.Seller) error {
+	return s.DB.Where("email = ?", seller.Email).Updates(seller).Error
+}
+
+func (s *SellerDB) Delete(email string) error {
+	seller, err := s.FindByEmail(email)
+	if err != nil {
+		return err
+	}
+	return s.DB.Delete(seller).Error
+}
+
+func (*SellerDB) FindAll(page int, limit int, sort string) ([]entity.Seller, error) {
+	panic("unimplemented")
 }

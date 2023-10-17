@@ -8,6 +8,7 @@ import (
 	"github.com/backend/src/internal/entity"
 	database "github.com/backend/src/internal/infra/db"
 	"github.com/backend/src/internal/infra/webServer/handlers"
+	"github.com/go-chi/chi"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -30,7 +31,10 @@ func main() {
 
 	sellerDB := database.NewSeller(db)
 	sellerHandler := handlers.NewSellerHandler(sellerDB)
-	http.HandleFunc("/seller", sellerHandler.CreateSeller)
 
-	http.ListenAndServe(config.WebServerPort, nil)
+	r := chi.NewRouter()
+	r.Post("/seller", sellerHandler.CreateSeller)
+	r.Get("/seller/{email}", sellerHandler.GetSeller)
+	r.Put("/seller/{email}", sellerHandler.UpdateSeller)
+	http.ListenAndServe(config.WebServerPort, r)
 }

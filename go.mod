@@ -4,6 +4,7 @@ go 1.21.2
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/go-chi/chi v1.5.1
 	github.com/go-chi/jwtauth v1.2.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
