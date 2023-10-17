@@ -7,3 +7,8 @@ type CreateSellerInput struct {
 	Password string `json:"password"`
 	Phone    string `json:"phone"`
 }
+
+type GetJwtInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

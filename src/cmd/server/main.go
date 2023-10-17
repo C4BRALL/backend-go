@@ -30,13 +30,18 @@ func main() {
 	db.AutoMigrate(&entity.Seller{}, &entity.Store{})
 
 	sellerDB := database.NewSeller(db)
-	sellerHandler := handlers.NewSellerHandler(sellerDB)
+	sellerHandler := handlers.NewSellerHandler(sellerDB, config.TokenAuth, config.JWTExpiresIn)
+	StoreDB := database.NewStore(db)
+	StoreHandler := handlers.NewStoreHandler(StoreDB)
 
 	r := chi.NewRouter()
 	r.Post("/seller", sellerHandler.CreateSeller)
+	r.Post("/seller/token", sellerHandler.GetJWT)
 	r.Get("/seller/{email}", sellerHandler.GetSeller)
 	r.Put("/seller/{email}", sellerHandler.UpdateSeller)
 	r.Delete("/seller/{document}", sellerHandler.DeleteSeller)
 	r.Get("/sellers", sellerHandler.GetSellers)
+
+	r.Post("/store", StoreHandler.NewStore)
 	http.ListenAndServe(config.WebServerPort, r)
 }
