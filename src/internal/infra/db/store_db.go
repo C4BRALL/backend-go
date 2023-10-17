@@ -46,9 +46,9 @@ func (s *StoreDB) FindAll(page, limit int, sort string) ([]entity.Store, error) 
 		sort = "desc"
 	}
 	if page != 0 && limit != 0 {
-		err = s.DB.Limit(limit).Offset((page - 1) * limit).Order("createdAt " + sort).Find(&stores).Error
+		err = s.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at" + sort).Find(&stores).Error
 	} else {
-		err = s.DB.Order("createdAt " + sort).Find(&stores).Error
+		err = s.DB.Order("created_at" + sort).Find(&stores).Error
 	}
 	return stores, err
 }

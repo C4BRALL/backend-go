@@ -53,6 +53,16 @@ func (s *SellerDB) Delete(id string) error {
 	return s.DB.Delete(seller).Error
 }
 
-func (*SellerDB) FindAll(page int, limit int, sort string) ([]entity.Seller, error) {
-	panic("unimplemented")
+func (s *SellerDB) FindAll(page int, limit int, sort string) ([]entity.Seller, error) {
+	var sellers []entity.Seller
+	var err error
+	if sort != "" && sort != "desc" && sort != "asc" {
+		sort = "desc"
+	}
+	if page != 0 && limit != 0 {
+		err = s.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at" + sort).Find(&sellers).Error
+	} else {
+		err = s.DB.Order("created_at" + sort).Find(&sellers).Error
+	}
+	return sellers, err
 }

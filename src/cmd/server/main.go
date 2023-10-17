@@ -37,5 +37,6 @@ func main() {
 	r.Get("/seller/{email}", sellerHandler.GetSeller)
 	r.Put("/seller/{email}", sellerHandler.UpdateSeller)
 	r.Delete("/seller/{document}", sellerHandler.DeleteSeller)
+	r.Get("/sellers", sellerHandler.GetSellers)
 	http.ListenAndServe(config.WebServerPort, r)
 }
