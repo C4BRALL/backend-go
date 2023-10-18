@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	_ "github.com/backend/docs"
 	"github.com/backend/src/configs"
 	"github.com/backend/src/internal/entity"
 	database "github.com/backend/src/internal/infra/db"
@@ -11,10 +12,25 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+//	@title			Backend GO
+//	@version		1.0
+//	@description	This is a sample server Petstore server.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	MIT
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host		localhost:9874
+// @BasePath	/v1
 func main() {
 	config, err := configs.LoadConfig("../../../")
 	if err != nil {
@@ -61,5 +77,8 @@ func main() {
 		r.Delete("/{id}", StoreHandler.DeleteStore)
 		r.Get("/all", StoreHandler.GetStores)
 	})
+
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:9874/swagger/doc.json")))
+
 	http.ListenAndServe(config.WebServerPort, r)
 }

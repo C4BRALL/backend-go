@@ -1,0 +1,16 @@
+basePath: /v1
+host: localhost:9874
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Petstore server.
+  license:
+    name: MIT
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Backend GO
+  version: "1.0"
+paths: {}
+swagger: "2.0"
