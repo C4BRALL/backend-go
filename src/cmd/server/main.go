@@ -9,6 +9,7 @@ import (
 	database "github.com/backend/src/internal/infra/db"
 	"github.com/backend/src/internal/infra/webServer/handlers"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -31,15 +32,20 @@ func main() {
 	db.AutoMigrate(&entity.Seller{}, &entity.Store{})
 
 	sellerDB := database.NewSeller(db)
-	sellerHandler := handlers.NewSellerHandler(sellerDB, config.TokenAuth, config.JWTExpiresIn)
+	sellerHandler := handlers.NewSellerHandler(sellerDB)
 	StoreDB := database.NewStore(db)
 	StoreHandler := handlers.NewStoreHandler(StoreDB)
 
 	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.WithValue("jwt", config.TokenAuth))
+	r.Use(middleware.WithValue("tokenExpiresIn", config.JWTExpiresIn))
 
 	r.Route("/seller", func(r chi.Router) {
 		r.Post("/", sellerHandler.CreateSeller)
-		r.Post("/login", sellerHandler.GetJWT)
+		r.Post("/signin", sellerHandler.GetJWT)
 		r.Get("/{email}", sellerHandler.GetSeller)
 		r.Put("/{email}", sellerHandler.UpdateSeller)
 		r.Delete("/{document}", sellerHandler.DeleteSeller)

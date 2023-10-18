@@ -14,23 +14,29 @@ import (
 )
 
 type SellerHandler struct {
-	SellerDB     usecases.SellerDBInterface
-	JWT          *jwtauth.JWTAuth
-	JwtExpiresIn int
+	SellerDB usecases.SellerDBInterface
+}
+
+func NewSellerHandler(db usecases.SellerDBInterface) *SellerHandler {
+	return &SellerHandler{
+		SellerDB: db,
+	}
 }
 
 func (h *SellerHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 	var seller dto.GetJwtInput
+	jwt := r.Context().Value("jwt").(*jwtauth.JWTAuth)
+	jwtExpiresIn := r.Context().Value("tokenExpiresIn").(int)
 	err := json.NewDecoder(r.Body).Decode(&seller)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
+		json.NewEncoder(w).Encode("bad Request")
 		return
 	}
 	s, err := h.SellerDB.FindByEmail(seller.Email)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(err.Error())
+		json.NewEncoder(w).Encode("seller not found")
 		return
 	}
 	if !s.ValidatePassword(seller.Password) {
@@ -38,9 +44,9 @@ func (h *SellerHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode("credentials invalid")
 		return
 	}
-	_, tokenString, err := h.JWT.Encode(map[string]interface{}{
+	_, tokenString, err := jwt.Encode(map[string]interface{}{
 		"sub": s.ID.String(),
-		"exp": time.Now().Add(time.Second * time.Duration(h.JwtExpiresIn)).Unix(),
+		"exp": time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix(),
 	})
 	if err != nil {
 		w.WriteHeader(http.StatusBadGateway)
@@ -55,14 +61,6 @@ func (h *SellerHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(accessToken)
-}
-
-func NewSellerHandler(db usecases.SellerDBInterface, jwt *jwtauth.JWTAuth, JwtExpiresIn int) *SellerHandler {
-	return &SellerHandler{
-		SellerDB:     db,
-		JWT:          jwt,
-		JwtExpiresIn: JwtExpiresIn,
-	}
 }
 
 func (h *SellerHandler) CreateSeller(w http.ResponseWriter, r *http.Request) {
