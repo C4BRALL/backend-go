@@ -26,8 +26,8 @@ import (
 //	@contact.url	http://www.swagger.io/support
 //	@contact.email	support@swagger.io
 
-//	@license.name	MIT
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+//	@license.name	MIT License
+//	@license.url	https://opensource.org/license/mit/
 
 // @host		localhost:9874
 // @BasePath	/v1
