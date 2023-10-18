@@ -1,0 +1,211 @@
+definitions:
+  dto.CreateSellerInput:
+    properties:
+      document:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  dto.GetJwtInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GetJwtOutput:
+    properties:
+      access_token:
+        type: string
+    type: object
+  entity.Seller:
+    properties:
+      createdAt:
+        type: string
+      document:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      status:
+        $ref: '#/definitions/enums.Status'
+      stores:
+        description: Não é necessário gorm:"foreignKey:SellerID"
+        items:
+          $ref: '#/definitions/entity.Store'
+        type: array
+      type:
+        $ref: '#/definitions/enums.UserType'
+      updatedAt:
+        type: string
+    type: object
+  entity.Store:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      sellerID:
+        description: Adicione uma chave estrangeira aqui
+        type: string
+      status:
+        $ref: '#/definitions/enums.Status'
+      updatedAt:
+        type: string
+    type: object
+  enums.Status:
+    enum:
+    - 1
+    - 0
+    type: integer
+    x-enum-varnames:
+    - Active
+    - Inactive
+  enums.UserType:
+    enum:
+    - customers
+    - seller
+    type: string
+    x-enum-varnames:
+    - Customer
+    - Salesperson
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:9874
+info:
+  contact:
+    email: cabral047dev@gmail.com
+    name: João Cabral
+    url: https://github.com/C4BRALL
+  description: This is a sample server e-commerce server.
+  title: Backend GO
+  version: "1.0"
+paths:
+  /seller:
+    post:
+      consumes:
+      - application/json
+      description: Create a new seller
+      parameters:
+      - description: seller request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSellerInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: seller created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
+  /seller/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Get a seller by email
+      parameters:
+      - description: E-mail of the seller
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Seller'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
+  /seller/signin:
+    post:
+      consumes:
+      - application/json
+      description: Generate token jwt
+      parameters:
+      - description: seller request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetJwtInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetJwtOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
+  /sellers/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all sellers
+      parameters:
+      - description: page_number
+        in: query
+        name: page
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Seller'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
+swagger: "2.0"

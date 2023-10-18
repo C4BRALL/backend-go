@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
+	_ "github.com/backend/docs"
 	"github.com/backend/src/configs"
 	"github.com/backend/src/internal/entity"
 	database "github.com/backend/src/internal/infra/db"
@@ -11,10 +13,20 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+//	@title			Backend GO
+//	@version		1.0
+//	@description	This is a sample server e-commerce server.
+
+//	@contact.name	João Cabral
+//	@contact.url	https://github.com/C4BRALL
+//	@contact.email	cabral047dev@gmail.com
+
+// @host		localhost:9874
 func main() {
 	config, err := configs.LoadConfig("../../../")
 	if err != nil {
@@ -61,5 +73,13 @@ func main() {
 		r.Delete("/{id}", StoreHandler.DeleteStore)
 		r.Get("/all", StoreHandler.GetStores)
 	})
-	http.ListenAndServe(config.WebServerPort, r)
+
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:9874/swagger/doc.json")))
+
+	log.Printf("Http server running at http://localhost%s", config.WebServerPort)
+
+	err = http.ListenAndServe(config.WebServerPort, r)
+	if err != nil {
+		panic(err.Error())
+	}
 }
