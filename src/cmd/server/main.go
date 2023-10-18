@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	_ "github.com/backend/docs"
@@ -29,7 +30,7 @@ import (
 //	@license.name	MIT
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host		localhost:9874
+// @host		localhost:6415
 // @BasePath	/v1
 func main() {
 	config, err := configs.LoadConfig("../../../")
@@ -78,7 +79,12 @@ func main() {
 		r.Get("/all", StoreHandler.GetStores)
 	})
 
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:9874/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:6415/swagger/doc.json")))
 
-	http.ListenAndServe(config.WebServerPort, r)
+	log.Printf("Http server running at http://localhost%s", config.WebServerPort)
+
+	err = http.ListenAndServe(config.WebServerPort, r)
+	if err != nil {
+		panic(err.Error())
+	}
 }
