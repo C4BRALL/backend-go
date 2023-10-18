@@ -1,16 +1,90 @@
-basePath: /v1
-host: localhost:8080
+definitions:
+  dto.CreateSellerInput:
+    properties:
+      document:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  dto.GetJwtInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GetJwtOutput:
+    properties:
+      access_token:
+        type: string
+    type: object
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:9874
 info:
   contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: This is a sample server Petstore server.
-  license:
-    name: MIT
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
+    email: cabral047dev@gmail.com
+    name: João Cabral
+    url: https://github.com/C4BRALL
+  description: This is a sample server e-commerce server.
   title: Backend GO
   version: "1.0"
-paths: {}
+paths:
+  /seller:
+    post:
+      consumes:
+      - application/json
+      description: Create a new seller
+      parameters:
+      - description: seller request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSellerInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: seller created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
+  /seller/signin:
+    post:
+      consumes:
+      - application/json
+      description: Generate token jwt
+      parameters:
+      - description: seller request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetJwtInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetJwtOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
 swagger: "2.0"

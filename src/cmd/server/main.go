@@ -20,18 +20,13 @@ import (
 
 //	@title			Backend GO
 //	@version		1.0
-//	@description	This is a sample server Petstore server.
-//	@termsOfService	http://swagger.io/terms/
+//	@description	This is a sample server e-commerce server.
 
-//	@contact.name	API Support
-//	@contact.url	http://www.swagger.io/support
-//	@contact.email	support@swagger.io
+//	@contact.name	João Cabral
+//	@contact.url	https://github.com/C4BRALL
+//	@contact.email	cabral047dev@gmail.com
 
-//	@license.name	MIT License
-//	@license.url	https://opensource.org/license/mit/
-
-// @host		localhost:6415
-// @BasePath	/v1
+// @host		localhost:9874
 func main() {
 	config, err := configs.LoadConfig("../../../")
 	if err != nil {
@@ -79,7 +74,7 @@ func main() {
 		r.Get("/all", StoreHandler.GetStores)
 	})
 
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:6415/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:9874/swagger/doc.json")))
 
 	log.Printf("Http server running at http://localhost%s", config.WebServerPort)
 
