@@ -86,6 +86,100 @@
                     }
                 }
             }
+        },
+        "/seller/{email}": {
+            "get": {
+                "description": "Get a seller by email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seller"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "E-mail of the seller",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Seller"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/sellers/all": {
+            "get": {
+                "description": "Get all sellers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seller"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "page_number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entity.Seller"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Error"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -127,6 +221,94 @@
                     "type": "string"
                 }
             }
+        },
+        "entity.Seller": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "document": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/enums.Status"
+                },
+                "stores": {
+                    "description": "Não é necessário gorm:\"foreignKey:SellerID\"",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Store"
+                    }
+                },
+                "type": {
+                    "$ref": "#/definitions/enums.UserType"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Store": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sellerID": {
+                    "description": "Adicione uma chave estrangeira aqui",
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/enums.Status"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "enums.Status": {
+            "type": "integer",
+            "enum": [
+                1,
+                0
+            ],
+            "x-enum-varnames": [
+                "Active",
+                "Inactive"
+            ]
+        },
+        "enums.UserType": {
+            "type": "string",
+            "enum": [
+                "customers",
+                "seller"
+            ],
+            "x-enum-varnames": [
+                "Customer",
+                "Salesperson"
+            ]
         },
         "handlers.Error": {
             "type": "object",

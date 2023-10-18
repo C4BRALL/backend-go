@@ -114,6 +114,17 @@ func (h *SellerHandler) CreateSeller(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Seller created!")
 }
 
+// Get Seller godoc
+// @Sumary Get a seller by email
+// @Description Get a seller by email
+// @Tags seller
+// @Accept json
+// @Produce json
+// @Param email path string true "E-mail of the seller"
+// @Success 200 {object} entity.Seller
+// @Failure 404 {object} Error
+// @Failure 500 {object} Error
+// @Router /seller/{email} [get]
 func (h *SellerHandler) GetSeller(w http.ResponseWriter, r *http.Request) {
 	email := chi.URLParam(r, "email")
 	if email == "" {
@@ -186,6 +197,18 @@ func (h *SellerHandler) DeleteSeller(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("seller deleted")
 }
 
+// Get All Sellers godoc
+// @Sumary Get all sellers
+// @Description Get all sellers
+// @Tags seller
+// @Accept json
+// @Produce json
+// @Param page query string false "page_number"
+// @Param limit query string false "limit"
+// @Success 200 {array} entity.Seller
+// @Failure 404 {object} Error
+// @Failure 500 {object} Error
+// @Router /sellers/all [get]
 func (h *SellerHandler) GetSellers(w http.ResponseWriter, r *http.Request) {
 	page := r.URL.Query().Get("page")
 	limit := r.URL.Query().Get("limit")

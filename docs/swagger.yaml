@@ -24,6 +24,66 @@ definitions:
       access_token:
         type: string
     type: object
+  entity.Seller:
+    properties:
+      createdAt:
+        type: string
+      document:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      status:
+        $ref: '#/definitions/enums.Status'
+      stores:
+        description: Não é necessário gorm:"foreignKey:SellerID"
+        items:
+          $ref: '#/definitions/entity.Store'
+        type: array
+      type:
+        $ref: '#/definitions/enums.UserType'
+      updatedAt:
+        type: string
+    type: object
+  entity.Store:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      sellerID:
+        description: Adicione uma chave estrangeira aqui
+        type: string
+      status:
+        $ref: '#/definitions/enums.Status'
+      updatedAt:
+        type: string
+    type: object
+  enums.Status:
+    enum:
+    - 1
+    - 0
+    type: integer
+    x-enum-varnames:
+    - Active
+    - Inactive
+  enums.UserType:
+    enum:
+    - customers
+    - seller
+    type: string
+    x-enum-varnames:
+    - Customer
+    - Salesperson
   handlers.Error:
     properties:
       message:
@@ -62,6 +122,34 @@ paths:
             $ref: '#/definitions/handlers.Error'
       tags:
       - seller
+  /seller/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Get a seller by email
+      parameters:
+      - description: E-mail of the seller
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Seller'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
   /seller/signin:
     post:
       consumes:
@@ -81,6 +169,39 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.GetJwtOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      tags:
+      - seller
+  /sellers/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all sellers
+      parameters:
+      - description: page_number
+        in: query
+        name: page
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Seller'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
         "500":
           description: Internal Server Error
           schema:
