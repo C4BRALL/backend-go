@@ -74,7 +74,7 @@ func main() {
 		r.Get("/all", StoreHandler.GetStores)
 	})
 
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:9874/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(fmt.Sprintf("http://localhost%s/swagger/doc.json", config.WebServerPort))))
 
 	log.Printf("Http server running at http://localhost%s", config.WebServerPort)
 
