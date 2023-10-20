@@ -3,17 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	_ "github.com/backend/docs"
 	"github.com/backend/src/configs"
 	"github.com/backend/src/internal/entity"
-	database "github.com/backend/src/internal/infra/db"
-	"github.com/backend/src/internal/infra/webServer/handlers"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-	"github.com/go-chi/jwtauth"
-	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/backend/src/internal/infra/database"
+	"github.com/backend/src/internal/infra/web"
+	"github.com/backend/src/internal/infra/web/webserver"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -43,43 +39,49 @@ func main() {
 	}
 	db.AutoMigrate(&entity.Seller{}, &entity.Store{})
 
-	sellerDB := database.NewSeller(db)
-	sellerHandler := handlers.NewSellerHandler(sellerDB)
-	StoreDB := database.NewStore(db)
-	StoreHandler := handlers.NewStoreHandler(StoreDB)
-
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.WithValue("jwt", config.TokenAuth))
-	r.Use(middleware.WithValue("tokenExpiresIn", config.JWTExpiresIn))
-
-	r.Route("/seller", func(r chi.Router) {
-		r.Post("/", sellerHandler.CreateSeller)
-		r.Post("/signin", sellerHandler.GetJWT)
-		r.Get("/{email}", sellerHandler.GetSeller)
-		r.Put("/{email}", sellerHandler.UpdateSeller)
-		r.Delete("/{document}", sellerHandler.DeleteSeller)
-		r.Get("/all", sellerHandler.GetSellers)
-	})
-
-	r.Route("/store", func(r chi.Router) {
-		r.Use(jwtauth.Verifier(config.TokenAuth))
-		r.Use(jwtauth.Authenticator)
-		r.Post("/", StoreHandler.NewStore)
-		r.Get("/", StoreHandler.GetStore)
-		r.Put("/{id}", StoreHandler.UpdateStore)
-		r.Delete("/{id}", StoreHandler.DeleteStore)
-		r.Get("/all", StoreHandler.GetStores)
-	})
-
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(fmt.Sprintf("http://localhost%s/swagger/doc.json", config.WebServerPort))))
-
+	webserver := webserver.NewWebServer(config.WebServerPort)
+	sellerDB := database.NewSellerRepository(db)
+	webSellerHandler := web.NewWebSellerHandler(sellerDB)
+	webserver.AddHandler("/seller", webSellerHandler.Create)
 	log.Printf("Http server running at http://localhost%s", config.WebServerPort)
+	webserver.Start()
 
-	err = http.ListenAndServe(config.WebServerPort, r)
-	if err != nil {
-		panic(err.Error())
-	}
+	// sellerHandler := handlers.NewSellerHandler(sellerDB)
+	// StoreDB := database.NewStore(db)
+	// StoreHandler := handlers.NewStoreHandler(StoreDB)
+
+	// r := chi.NewRouter()
+	// r.Use(middleware.Logger)
+	// r.Use(middleware.Recoverer)
+	// r.Use(middleware.RealIP)
+	// r.Use(middleware.WithValue("jwt", config.TokenAuth))
+	// r.Use(middleware.WithValue("tokenExpiresIn", config.JWTExpiresIn))
+
+	// r.Route("/seller", func(r chi.Router) {
+	// 	r.Post("/", sellerHandler.CreateSeller)
+	// 	r.Post("/signin", sellerHandler.GetJWT)
+	// 	r.Get("/{email}", sellerHandler.GetSeller)
+	// 	r.Put("/{email}", sellerHandler.UpdateSeller)
+	// 	r.Delete("/{document}", sellerHandler.DeleteSeller)
+	// 	r.Get("/all", sellerHandler.GetSellers)
+	// })
+
+	// r.Route("/store", func(r chi.Router) {
+	// 	r.Use(jwtauth.Verifier(config.TokenAuth))
+	// 	r.Use(jwtauth.Authenticator)
+	// 	r.Post("/", StoreHandler.NewStore)
+	// 	r.Get("/", StoreHandler.GetStore)
+	// 	r.Put("/{id}", StoreHandler.UpdateStore)
+	// 	r.Delete("/{id}", StoreHandler.DeleteStore)
+	// 	r.Get("/all", StoreHandler.GetStores)
+	// })
+
+	// r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(fmt.Sprintf("http://localhost%s/swagger/doc.json", config.WebServerPort))))
+
+	// log.Printf("Http server running at http://localhost%s", config.WebServerPort)
+
+	// err = http.ListenAndServe(config.WebServerPort, r)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
 }

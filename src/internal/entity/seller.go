@@ -63,11 +63,6 @@ func NewSeller(name, email, document, password string, phone string) (*Seller, e
 	return seller, nil
 }
 
-func (s *Seller) ValidatePassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(s.Password), []byte(password))
-	return err == nil
-}
-
 func (s *Seller) Validate() error {
 	if s.ID.String() == "" {
 		return ErrIDIsRequired
@@ -89,4 +84,9 @@ func (s *Seller) Validate() error {
 		return ErrPhoneIsRequired
 	}
 	return nil
+}
+
+func (s *Seller) ValidatePassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(s.Password), []byte(password))
+	return err == nil
 }

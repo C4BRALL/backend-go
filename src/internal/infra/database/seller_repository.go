@@ -1,23 +1,23 @@
-package db
+package database
 
 import (
 	"github.com/backend/src/internal/entity"
 	"gorm.io/gorm"
 )
 
-type SellerDB struct {
+type SellerRepository struct {
 	DB *gorm.DB
 }
 
-func NewSeller(db *gorm.DB) *SellerDB {
-	return &SellerDB{DB: db}
+func NewSellerRepository(db *gorm.DB) *SellerRepository {
+	return &SellerRepository{DB: db}
 }
 
-func (s *SellerDB) Create(seller *entity.Seller) error {
+func (s *SellerRepository) Create(seller *entity.Seller) error {
 	return s.DB.Create(seller).Error
 }
 
-func (s *SellerDB) FindByDocument(document string) (*entity.Seller, error) {
+func (s *SellerRepository) FindByDocument(document string) (*entity.Seller, error) {
 	var seller entity.Seller
 	if err := s.DB.Where("document = ?", document).First(&seller).Error; err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (s *SellerDB) FindByDocument(document string) (*entity.Seller, error) {
 	return &seller, nil
 }
 
-func (s *SellerDB) FindById(id string) (*entity.Seller, error) {
+func (s *SellerRepository) FindById(id string) (*entity.Seller, error) {
 	var seller entity.Seller
 	if err := s.DB.Where("id = ?", id).First(&seller).Error; err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (s *SellerDB) FindById(id string) (*entity.Seller, error) {
 	return &seller, nil
 }
 
-func (s *SellerDB) FindByEmail(email string) (*entity.Seller, error) {
+func (s *SellerRepository) FindByEmail(email string) (*entity.Seller, error) {
 	var seller entity.Seller
 	if err := s.DB.Where("email = ?", email).First(&seller).Error; err != nil {
 		return nil, err
@@ -41,11 +41,11 @@ func (s *SellerDB) FindByEmail(email string) (*entity.Seller, error) {
 	return &seller, nil
 }
 
-func (s *SellerDB) Update(seller *entity.Seller) error {
+func (s *SellerRepository) Update(seller *entity.Seller) error {
 	return s.DB.Where("email = ?", seller.Email).Updates(seller).Error
 }
 
-func (s *SellerDB) Delete(id string) error {
+func (s *SellerRepository) Delete(id string) error {
 	seller, err := s.FindById(id)
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (s *SellerDB) Delete(id string) error {
 	return s.DB.Delete(seller).Error
 }
 
-func (s *SellerDB) FindAll(page int, limit int, sort string) ([]entity.Seller, error) {
+func (s *SellerRepository) FindAll(page int, limit int, sort string) ([]entity.Seller, error) {
 	var sellers []entity.Seller
 	var err error
 	if sort != "" && sort != "desc" && sort != "asc" {
